@@ -5,7 +5,7 @@ import { POLL_TYPE } from "../../utils/data";
 interface PropsType {
   title: string;
   filterType: string;
-  setFilterType: (value: string) => void; // ✅ Correct function type
+  setFilterType: (value: string) => void;
 }
 
 const HeaderWithFilter = ({ title, filterType, setFilterType }: PropsType) => {
@@ -20,8 +20,8 @@ const HeaderWithFilter = ({ title, filterType, setFilterType }: PropsType) => {
           className={`flex items-center gap-3 text-sm text-white bg-blue-400 px-4 py-2
         ${open ? "rounded-t-lg" : "rounded-lg"}`}
           onClick={() => {
-            if (filterType !== "") setFilterType("");
-            setOpen(!open);
+            if (filterType !== "") setFilterType(""); // Clear filter if set
+            setOpen(!open); // Toggle filter menu visibility
           }}
         >
           {filterType !== "" ? (
@@ -44,12 +44,12 @@ const HeaderWithFilter = ({ title, filterType, setFilterType }: PropsType) => {
             <button
               key={type.value}
               className={`text-[14px] px-4 pt-1 rounded-lg text-nowrap text-center ${
-                filterType == type.value
-                  ? "text-white bg-sky-900"
-                  : "text-[14px] bg-sky-100"
+                filterType === type.value
+                  ? "text-white bg-sky-900" // Selected filter
+                  : "bg-sky-100" // Unselected filter
               }`}
               onClick={() => {
-                setFilterType(type.value);
+                setFilterType(type.value); // Update filter type on click
               }}
             >
               {type.label}

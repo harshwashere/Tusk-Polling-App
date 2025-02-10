@@ -8,6 +8,7 @@ import {
 } from "react";
 
 type UserType = {
+  _id: string;
   totalPollsVotes: number;
   totalPollsCreated: number;
   totalPollsBookmarked: number;
@@ -23,6 +24,7 @@ type UserContextType = {
   updateUser: (userData: UserType) => void;
   clearUser: () => void;
   onPollCreateOrDelete: (type?: "create" | "delete") => void;
+  onUserVoted: () => void;
 };
 
 export const UserContext = createContext<UserContextType | undefined>(
@@ -50,6 +52,12 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
     });
   };
 
+  const onUserVoted = () => {
+    const totalPollsVotes = user?.totalPollsVotes || 0;
+
+    updateUserStatus("totalPollsVotes", totalPollsVotes + 1);
+  };
+
   const onPollCreateOrDelete = async (type = "create") => {
     const totalPollsCreated = user?.totalPollsCreated || 0;
     updateUserStatus(
@@ -59,7 +67,7 @@ const UserProvider: FC<UserProviderProps> = ({ children }) => {
   };
 
   const contextValue = useMemo(
-    () => ({ user, updateUser, clearUser, onPollCreateOrDelete }),
+    () => ({ user, updateUser, clearUser, onPollCreateOrDelete, onUserVoted }),
     [user]
   );
 

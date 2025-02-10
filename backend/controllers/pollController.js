@@ -60,17 +60,22 @@ export const createpoll = async (req, res) => {
 };
 
 export const getallpolls = async (req, res) => {
-    const { type, creatorId, page = 1, limit = 10 } = req.query
-    const filter = {}
-    const userId = req.user._id
+    const { type, creatorId, page = 1, limit = 10 } = req.params;
+    const filter = {};
+    const userId = req.user._id;
 
-    if (type) filter.type = type
-    if (creatorId) filter.creator = creatorId
+    if (type) filter.type = type;
+    if (creatorId) {
+        filter.creator = mongoose.Types.ObjectId(creatorId);
+        if (!mongoose.Types.ObjectId.isValid(creatorId)) {
+            return res.status(400).json({ message: "Invalid creatorId format" });
+        }
+    }
 
     try {
-        const pageNumber = parseInt(page, 10)
-        const pageSize = parseInt(limit, 10)
-        const skip = (pageNumber - 1) * pageSize
+        const pageNumber = parseInt(page, 10);
+        const pageSize = parseInt(limit, 10);
+        const skip = (pageNumber - 1) * pageSize;
 
         const polls = await Poll.find(filter)
             .populate("creator", "fullname username email profileimageUrl")
@@ -80,18 +85,18 @@ export const getallpolls = async (req, res) => {
             })
             .skip(skip)
             .limit(pageSize)
-            .sort({ createdAt: -1 })
+            .sort({ createdAt: -1 });
 
         const updatedPolls = polls.map((poll) => {
-            const userHasVoted = poll.voters.some((voterId) => voterId.equals(userId))
+            const userHasVoted = poll.voters.some((voterId) => voterId.equals(userId));
 
             return {
                 ...poll.toObject(),
                 userHasVoted
-            }
-        })
+            };
+        });
 
-        const totalPolls = await Poll.countDocuments(filter)
+        const totalPolls = await Poll.countDocuments(filter);
 
         const stats = await Poll.aggregate([
             {
@@ -106,7 +111,7 @@ export const getallpolls = async (req, res) => {
                     _id: 0
                 }
             }
-        ])
+        ]);
 
         const allTypes = [
             { type: "single-choice", label: "Single Choice" },
@@ -114,17 +119,17 @@ export const getallpolls = async (req, res) => {
             { type: "image-based", label: "Image Based" },
             { type: "open-ended", label: "Open Ended" },
             { type: "rating", label: "Rating" }
-        ]
+        ];
 
         const statsWithDefaults = allTypes.map((pollType) => {
-            const stat = stats.find((item) => item.type === pollType.type)
+            const stat = stats.find((item) => item.type === pollType.type);
 
             return {
                 label: pollType.label,
                 type: pollType.type,
                 count: stat ? stat.count : 0
-            }
-        }).sort((a, b) => b.count - a.count)
+            };
+        }).sort((a, b) => b.count - a.count);
 
         return res.status(200).json({
             polls: updatedPolls,
@@ -132,51 +137,66 @@ export const getallpolls = async (req, res) => {
             totalPages: Math.ceil(totalPolls / pageSize),
             totalPolls,
             stats: statsWithDefaults
-        })
+        });
     } catch (error) {
-        return res.status(500).json({ message: "Error registering user", error: error.message })
+        console.error(error);
+        return res.status(500).json({ message: "Error fetching polls", error: error.message });
     }
-}
+};
 
-export const getvotedpolls = async (req, res) => {
-    const { page = 1, limit = 10 } = req.query
-    const userId = req.user._id
-
+export const getVotedPolls = async (req, res) => {
     try {
-        const pageNumber = parseInt(page, 10)
-        const pageSize = parseInt(limit, 10)
-        const skip = (pageNumber - 1) * pageSize
+        // Check if the user is authenticated
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized access" });
+        }
 
-        const polls = await Poll.find({ voters: userId })
+        const { page = 1, limit = 10, type } = req.query;
+        const userId = req.user._id;
+
+        const pageNumber = Math.max(1, parseInt(page, 10) || 1);
+        const pageSize = Math.max(1, parseInt(limit, 10) || 10);
+        const skip = (pageNumber - 1) * pageSize;
+
+        const pollsQuery = { voters: userId };
+
+        if (type) {
+            pollsQuery.type = type;
+        }
+
+        const polls = await Poll.find(pollsQuery)
             .populate("creator", "fullname username email profileimageUrl")
             .populate({
                 path: "response",
-                select: "username profileimageUrl fullname"
+                select: "username profileimageUrl fullname",
             })
             .skip(skip)
-            .limit(pageSize)
+            .limit(pageSize);
 
         const updatedPolls = polls.map((poll) => {
-            const userHasVoted = poll.voters.some((voterId) => voterId.equals(userId))
-
+            const userHasVoted = poll.voters.some((voterId) => voterId.equals(userId));
             return {
                 ...poll.toObject(),
-                userHasVoted
-            }
-        })
+                userHasVoted,
+            };
+        });
 
-        const totalPolls = await Poll.countDocuments({ voters: userId })
+        const totalPolls = await Poll.countDocuments({ voters: userId });
 
         return res.status(200).json({
             polls: updatedPolls,
             currentPage: pageNumber,
             totalPages: Math.ceil(totalPolls / pageSize),
             totalPolls,
-        })
+        });
     } catch (error) {
-        return res.status(500).json({ message: "Error registering user", error })
+        console.error("Error fetching voted polls:", error);
+        return res.status(500).json({
+            message: "Error fetching voted polls",
+            error: error.message || error,
+        });
     }
-}
+};
 
 export const getpollbyid = async (req, res) => {
     const { id } = req.params
@@ -198,9 +218,7 @@ export const voteonpoll = async (req, res) => {
     const { optionindex, voterId, responseText } = req.body;
 
     try {
-        console.log("Fetching poll...");
         const poll = await Poll.findById(id);
-        console.log("Poll fetched:", poll);
 
         if (!poll) {
             return res.status(404).json({ message: "Poll not found" });
@@ -215,9 +233,7 @@ export const voteonpoll = async (req, res) => {
                 return res.status(400).json({ message: "User has already voted on this poll." });
             }
             poll.response.push({ voterId, responseText });
-            console.log("Saving response for open-ended poll...");
             await poll.save();
-            console.log("Response saved!");
             return res.status(200).json({ poll });
         }
 
@@ -234,9 +250,7 @@ export const voteonpoll = async (req, res) => {
             poll.voters.push(voterId);
         }
 
-        console.log("Saving poll...");
         await poll.save();
-        console.log("Poll saved!");
 
         return res.status(200).json({ poll });
     } catch (error) {

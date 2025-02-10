@@ -12,7 +12,6 @@ type PropsType = {
 const DashboardLayout = ({ children, activeMenu }: PropsType) => {
   const { user } = useUserContext();
 
-  console.log(user)
   return (
     <div>
       <Navbar activeMenu={activeMenu} />

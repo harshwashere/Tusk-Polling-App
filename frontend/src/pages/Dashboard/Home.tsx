@@ -1,28 +1,25 @@
-import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import useUserAuth from "../../hooks/useUserAuth";
 import { useEffect, useState } from "react";
 import HeaderWithFilter from "../../components/layout/HeaderWithFilter";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/helper";
-import PollCards from "../../components/PollCards/PollCards";
+import PollCards, { Poll } from "../../components/PollCards/PollCards";
 
 const Home = () => {
   useUserAuth();
 
-  const navigate = useNavigate();
+  const [allPolls, setAllPolls] = useState<Poll[]>([]);
 
-  const [allPolls, setAllPolls] = useState([]);
-  const [stats, setStats] = useState([]);
+  const [, setStats] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState<string>("");
   const PAGE_SIZE = 10;
-
+  
   const fetchAllPolls = async (overridePage = page) => {
     if (loading) return;
-
     setLoading(true);
 
     try {
@@ -30,19 +27,20 @@ const Home = () => {
         `${API_PATHS.POLLS.GET_ALL}?page=${overridePage}&limit=${PAGE_SIZE}&type=${filterType}`
       );
 
-      if (response.data?.polls?.length > 0) {
-        setAllPolls((prevpolls) => {
-          return overridePage === 1
+      if (response.data.polls.length > 0) {
+        setAllPolls((prevpolls) =>
+          overridePage === 1
             ? response.data.polls
-            : [...prevpolls, ...response.data.polls];
-        });
+            : [...prevpolls, ...response.data.polls]
+        );
 
-        setStats(response.data?.stats || []);
+        setStats(response.data.stats || []);
         setHasMore(response.data.polls.length === PAGE_SIZE);
       } else {
-        setHasMore(false);
+        setHasMore(!hasMore);
       }
     } catch (error) {
+      console.error("Error fetching polls:", error);
     } finally {
       setLoading(false);
     }
@@ -72,21 +70,23 @@ const Home = () => {
 
         {allPolls.map((poll) => (
           <PollCards
-            key={`dashboard_${poll.id}`}
-            pollId={poll.id}
+            key={`dashboard_${poll._id}`}
+            id={poll._id}
             question={poll.question}
             type={poll.type}
             options={poll.options}
-            voters={poll.votes.length || 0}
+            votes={poll.votes} // Should be an array, not a number
             response={poll.response || []}
-            creatorProfileImg={poll.creator.profileImgUrl || null}
-            creatorName={poll.creator.fullname}
-            creatorUsername={poll.creator.username}
+            creator={{
+              profileImgUrl: poll.creator.profileImgUrl || "",
+              fullname: poll.creator.fullname,
+              username: poll.creator.username,
+            }}
             userHasVoted={poll.userHasVoted || false}
-            isPollClosed={poll.closed}
-            createdAt={poll.createdAt}
-            isMyPoll={undefined}
-          />
+            closed={poll.closed}
+            createdAt={poll.createdAt} isBookmarked={false} toggleBookmark={function (): void {
+              throw new Error("Function not implemented.");
+            } }          />
         ))}
       </div>
     </DashboardLayout>

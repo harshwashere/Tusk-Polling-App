@@ -1,6 +1,6 @@
 import { Router } from "express";
 import protect from "../middleware/authMiddleware.js";
-import { bookmarkpoll, closepoll, createpoll, deletepoll, getallpolls, getbookmarkedpoll, getpollbyid, getvotedpolls, voteonpoll } from "../controllers/pollController.js";
+import { bookmarkpoll, closepoll, createpoll, deletepoll, getallpolls, getbookmarkedpoll, getpollbyid, getVotedPolls, voteonpoll } from "../controllers/pollController.js";
 
 const pollroute = Router()
 
@@ -8,7 +8,7 @@ pollroute.post("/create", protect, createpoll)
 
 pollroute.get("/getallpolls", protect, getallpolls)
 
-pollroute.get("/votedpolls", protect, getvotedpolls)
+pollroute.get("/votedpolls", protect, getVotedPolls)
 
 pollroute.get("/:id", protect, getpollbyid)
 

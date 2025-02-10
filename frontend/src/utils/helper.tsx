@@ -14,7 +14,7 @@ export const API_PATHS = {
   },
   POLLS: {
     CREATE: "/poll/create",
-    GET_ALL: "/poll/getallpoll",
+    GET_ALL: "/poll/getallpolls",
     GET_BY_ID: (pollId: string) => `/poll/${pollId}`,
     VOTE: (pollId: string) => `/poll/${pollId}/vote`,
     CLOSE: (pollId: string) => `/poll/${pollId}/close`,
@@ -41,6 +41,9 @@ export const getInitials = (name: string) => {
   return initials.toUpperCase();
 };
 
-export const getPollBookmarked = (pollId: never, userBookmarks = []) => {
+export const getPollBookmarked = (
+  pollId: string,
+  userBookmarks: string[] = []
+) => {
   return userBookmarks.includes(pollId);
 };
