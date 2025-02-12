@@ -5,6 +5,7 @@ import AuthInput from "../../components/Input/AuthInput";
 import { API_PATHS, validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import { UserContext } from "../../context/userContext";
+import Loader from "../../components/layout/Loader";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -37,6 +38,8 @@ const LoginForm = () => {
         email,
         password,
       });
+
+      console.log(email, password);
 
       const { token, user } = response.data;
 
@@ -86,8 +89,9 @@ const LoginForm = () => {
             onChange={({ target }) => setEmail(target.value)}
             label="Email Address"
             placeholder="john@example.com"
-            type="text"
+            type="email"
             name="email"
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
           />
 
           <AuthInput
@@ -97,6 +101,7 @@ const LoginForm = () => {
             placeholder="Minimum 8 characters are required."
             type="password"
             name="password"
+            pattern="/^[a-zA-Z0-9!@#\$%\^\&*_=+-]{8,12}$/"
           />
 
           {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
@@ -107,24 +112,7 @@ const LoginForm = () => {
           >
             {loading ? (
               <>
-                <div className="loader">
-                  <div className="circle">
-                    <div className="dot"></div>
-                    <div className="outline"></div>
-                  </div>
-                  <div className="circle">
-                    <div className="dot"></div>
-                    <div className="outline"></div>
-                  </div>
-                  <div className="circle">
-                    <div className="dot"></div>
-                    <div className="outline"></div>
-                  </div>
-                  <div className="circle">
-                    <div className="dot"></div>
-                    <div className="outline"></div>
-                  </div>
-                </div>
+                <Loader />
               </>
             ) : (
               <>LOGIN</>

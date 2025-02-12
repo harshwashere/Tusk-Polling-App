@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa6";
+import AuthLoader from "../layout/AuthLoader";
 
 interface PropType {
   id: string;
@@ -15,16 +16,12 @@ interface PropType {
 }
 
 const PollActions = ({
-  id,
   isVoteComplete,
   inputCaptured,
   onVoteSubmit,
   isBookmarked,
   toggleBookmark,
-  isMyPoll,
   pollClosed,
-  onClosePoll,
-  onDelete
 }: PropType) => {
   const [loading, setLoading] = useState(false);
 
@@ -51,7 +48,7 @@ const PollActions = ({
 
       {inputCaptured && !isVoteComplete && (
         <button className="btn-small ml-auto" onClick={handleVoteClick} disabled={loading}>
-          {loading ? "Submitting..." : "Submit"}
+          {loading ? <AuthLoader /> : "Submit"}
         </button>
       )}
     </div>

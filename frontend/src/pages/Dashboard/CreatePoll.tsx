@@ -46,23 +46,36 @@ const CreatePoll = () => {
         const imgUploadRes = await uploadImage(imageOption.file);
         return imgUploadRes.imageUrl || "";
       } catch (error) {
-        toast.error(`Error uploading image: ${imageOption.file.name}`);
+        console.error(`Error uploading image: ${imageOption.file.name}`, error);
+        toast.error(`Failed to upload image: ${imageOption.file.name}`);
         return "";
       }
     });
 
     const optionArr = await Promise.all(optionPromises);
-    return optionArr;
+
+    const validOptions = optionArr.filter((url) => url.trim() !== "");
+    console.log(validOptions);
+
+    if (validOptions.length < imageOptions.length) {
+      toast.error("Some images failed to upload. Please try again.");
+    }
+
+    return validOptions;
   };
 
   const getOptions = async () => {
     switch (pollData.type) {
       case "single-choice":
-        return pollData.options;
+        return pollData.options.map((option) => ({
+          optiontext: option,
+        }));
 
       case "image-based":
         const option = await updateImageAndGetLink(pollData.imageOptions);
-        return option;
+        return option.map((image) => ({
+          optiontext: image,
+        }));
 
       default:
         return [];
@@ -96,6 +109,11 @@ const CreatePoll = () => {
 
     const optionData = await getOptions();
 
+    // const formattedOptions = optionData.map((optiontext) => ({
+    //   optiontext,
+    // }));
+    // console.log("Formatted Options:", formattedOptions);
+
     try {
       const response = await axiosInstance.post(API_PATHS.POLLS.CREATE, {
         question,
@@ -103,17 +121,22 @@ const CreatePoll = () => {
         options: optionData,
         creatorId: (user as unknown as { _id: string })._id,
       });
+
       if (response) {
         toast.success("Poll Created Successfully");
-        onPollCreateOrDelete()
+        onPollCreateOrDelete();
         clearData();
       }
     } catch (error: any) {
-      const errorMessage =
+      console.error(
+        "Poll Creation Error:",
+        error.response?.data || error.message
+      );
+      toast.error(
         error?.response?.data?.message ||
-        "Something went wrong. Please try again later";
-      toast.error(errorMessage);
-      handleValueChange("error", errorMessage);
+          "Something went wrong. Please try again later"
+      );
+      handleValueChange("error", error?.response?.data?.message || "");
     }
   };
 

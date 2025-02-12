@@ -26,21 +26,21 @@ export const createpoll = async (req, res) => {
             case "rating":
                 processedOptions = [1, 2, 3, 4, 5].map((option) => ({
                     optiontext: option
-                }))
-                break
+                }));
+                break;
 
             case "yes/no":
                 processedOptions = ["Yes", "No"].map((option) => ({
                     optiontext: option
-                }))
-                break
+                }));
+                break;
 
             case "image-based":
                 if (!options || options.length < 2) {
-                    return res.status(400).json({ message: "Image-based poll must have at least 2 images." })
+                    return res.status(400).json({ message: "Image-based poll must have at least 2 images." });
                 }
-                processedOptions = options.map((url) => ({ optionText: url }))
-                break
+                processedOptions = options.map((url) => ({ optiontext: url }));  // Fix this to `optiontext` (lowercase 't')
+                break;
 
             default:
                 return res.status(400).json({ message: "Invalid poll type." });

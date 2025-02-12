@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import toast from "react-hot-toast";
 import { HiOutlineTrash } from "react-icons/hi";
 import { HiMiniPlus } from "react-icons/hi2";
 
@@ -16,20 +17,30 @@ const OptionImageSelector = ({ imageList, setImageList }: PropType) => {
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
-    if (file && imageList.length < 4) {
-      const reader = new FileReader();
+    if (!file) return;
 
-      reader.onload = () => {
-        setImageList([...imageList, { base64: reader.result, file }]);
-      };
-
-      reader.readAsDataURL(file);
-      event.target.value = "";
+    const validExtensions = ["image/jpeg", "image/png", "image/jpg"];
+    if (!validExtensions.includes(file.type)) {
+      toast.error("Only .jpeg, .png, and .jpg formats are allowed!");
+      return;
     }
+
+    if (imageList.length >= 4) {
+      toast.error("You can upload a maximum of 4 images.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageList([...imageList, { base64: reader.result, file }]);
+    };
+
+    reader.readAsDataURL(file);
+    event.target.value = "";
   };
 
   const handleDeleteImage = (index: number) => {
-    const updateArr = imageList.filter((_, i) => i !== index)
+    const updateArr = imageList.filter((_, i) => i !== index);
     setImageList(updateArr);
   };
 

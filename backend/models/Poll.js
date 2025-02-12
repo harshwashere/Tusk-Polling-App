@@ -10,7 +10,8 @@ const PollSchema = new Schema({
         required: true
     },
     options: [{
-        optiontext: { type: String, required: true },
+        optiontext: { type: Object, required: true }
+    }, {
         votes: { type: Number, default: 0 }
     }],
     response: [{

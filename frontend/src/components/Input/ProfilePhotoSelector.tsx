@@ -1,16 +1,27 @@
-import { useRef, useState } from "react";
+import { useRef, useState, ChangeEvent, SetStateAction, Dispatch } from "react";
 import { LuUpload, LuUser, LuTrash } from "react-icons/lu";
 
-const ProfilePhotoSelector = ({ profilePic, setProfilePic }) => {
-  const inputRef = useRef(null);
-  const [previewUrl, setPreviewUrl] = useState(profilePic ? URL.createObjectURL(profilePic) : null);
+// Define the type for the props
+interface ProfilePhotoSelectorProps {
+  profilePic: File | null;
+  setProfilePic: (file: File | null) => Dispatch<SetStateAction<string>>;
+}
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setProfilePic(file); // Correctly update profilePic
-      setPreviewUrl(URL.createObjectURL(file)); // Show preview
-    }
+const ProfilePhotoSelector = ({
+  profilePic,
+  setProfilePic,
+}: ProfilePhotoSelectorProps) => {
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    profilePic ? URL.createObjectURL(profilePic) : null
+  );
+
+  // Define the event type for the image change
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setProfilePic(file);
+    setPreviewUrl(file ? URL.createObjectURL(file) : null);
   };
 
   const handleRemoveImage = () => {
@@ -19,7 +30,7 @@ const ProfilePhotoSelector = ({ profilePic, setProfilePic }) => {
   };
 
   const onChooseFile = () => {
-    inputRef.current.click();
+    inputRef.current?.click();
   };
 
   return (
@@ -35,7 +46,11 @@ const ProfilePhotoSelector = ({ profilePic, setProfilePic }) => {
       <div className="relative w-20 h-20">
         {previewUrl ? (
           <>
-            <img src={previewUrl} alt="Profile" className="w-20 h-20 rounded-full object-cover" />
+            <img
+              src={previewUrl}
+              alt="Profile"
+              className="w-20 h-20 rounded-full object-cover"
+            />
             <button
               type="button"
               className="w-6 h-6 flex items-center justify-center bg-red-500 text-white rounded-full absolute -bottom-1 -right-1"

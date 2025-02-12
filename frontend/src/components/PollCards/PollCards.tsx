@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { API_PATHS, getPollBookmarked } from "../../utils/helper";
 import UserProfileInfo from "../cards/UserProfileInfo";
 import PollActions from "./PollActions";
@@ -39,15 +39,15 @@ const PollCards = ({
   const { user, onUserVoted } = useUserContext();
 
   const [isVoteComplete, setIsVoteComplete] = useState<boolean>(userHasVoted);
-  const [pollClosed, setPollClosed] = useState<boolean>(closed);
-  const [pollDeleted, setPollDeleted] = useState<boolean>(false);
+  const [pollClosed, ] = useState<boolean>(closed);
+  const [pollDeleted, ] = useState<boolean>(false);
 
-  const [option, setOptions] = useState<{ _id: string; optionText: string }[]>([
-    { _id: "1", optionText: "Option 1" },
-    { _id: "2", optionText: "Option 2" },
+  const [option, ] = useState<{ _id: string; optionText: string }[]>([
+    { _id: "1", optionText: "Yes" },
+    { _id: "2", optionText: "No" },
   ]);
 
-  const [pollResult, setPollResult] = useState<{
+  const [, setPollResult] = useState<{
     options: string[];
     votes: number[];
     response?: string[];

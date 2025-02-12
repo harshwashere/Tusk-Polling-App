@@ -7,6 +7,7 @@ import { UserContext } from "../../context/userContext";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/helper";
 import uploadImage from "../../utils/uploadImage";
+import AuthLoader from "../../components/layout/AuthLoader";
 
 const SignupForm = () => {
   const [input, setInput] = useState({
@@ -26,7 +27,7 @@ const SignupForm = () => {
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let profileimageUrl = ""; // Fix variable name
+    let profileimageUrl = "";
 
     if (!input.fullName || !input.email || !input.username || !input.password) {
       alert("All fields are required!");
@@ -36,7 +37,6 @@ const SignupForm = () => {
     try {
       setLoading(true);
 
-      // Upload Image if selected
       if (input.profilePic) {
         const imgUpload = await uploadImage(input.profilePic);
         profileimageUrl = imgUpload.imageUrl || "";
@@ -48,10 +48,8 @@ const SignupForm = () => {
         username: input.username,
         email: input.email,
         password: input.password,
-        profileimageUrl, // Fix variable name to match backend
+        profileimageUrl,
       });
-
-      console.log("Signup Response: ", response.data);
 
       const { token, user } = response.data;
 
@@ -104,6 +102,7 @@ const SignupForm = () => {
             placeholder="Full Name"
             label="Full Name"
             type="text"
+            pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$"
           />
           <AuthInput
             name="email"
@@ -112,6 +111,7 @@ const SignupForm = () => {
             placeholder="Email"
             label="Email"
             type="email"
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
           />
           <AuthInput
             name="username"
@@ -120,6 +120,7 @@ const SignupForm = () => {
             placeholder="Username"
             label="Username"
             type="text"
+            pattern="[A-Za-z][A-Za-z0-9_]{2,15}$"
           />
           <AuthInput
             name="password"
@@ -128,6 +129,7 @@ const SignupForm = () => {
             placeholder="Password"
             label="Password"
             type="password"
+            pattern="/^[a-zA-Z0-9!@#\$%\^\&*_=+-]{8,12}$/"
           />
         </div>
 
@@ -137,7 +139,7 @@ const SignupForm = () => {
           type="submit"
           className="mt-4 bg-blue-600 text-white py-2 px-4 rounded"
         >
-          {loading ? "Loading..." : "SIGN UP"}
+          {loading ? <AuthLoader /> : "SIGN UP"}
         </button>
 
         <p className="text-[13px] text-slate-800 mt-3">

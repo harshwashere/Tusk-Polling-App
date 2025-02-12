@@ -8,9 +8,18 @@ type PropsType = {
   placeholder: string;
   label: string;
   type: string;
+  pattern: string
 };
 
-const AuthInput = ({ name, value, onChange, label, placeholder, type }: PropsType) => {
+const AuthInput = ({
+  name,
+  value,
+  onChange,
+  label,
+  placeholder,
+  type,
+  pattern
+}: PropsType) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -18,12 +27,15 @@ const AuthInput = ({ name, value, onChange, label, placeholder, type }: PropsTyp
       <label className="text-[13px] text-slate-800">{label}</label>
       <div className="input-box relative">
         <input
-          name={name} // ✅ Ensure the input has a name attribute
-          type={type === "password" ? (showPassword ? "text" : "password") : type}
+          name={name}
+          type={
+            type === "password" ? (showPassword ? "text" : "password") : type
+          }
           placeholder={placeholder}
+          pattern={pattern}
           className="w-full bg-transparent outline-none"
           value={value}
-          onChange={onChange} // ✅ Pass event directly
+          onChange={onChange}
         />
 
         {type === "password" && (
