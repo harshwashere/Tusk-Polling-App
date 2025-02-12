@@ -5,7 +5,7 @@ import AuthInput from "../../components/Input/AuthInput";
 import { API_PATHS, validateEmail } from "../../utils/helper";
 import axiosInstance from "../../utils/axiosInstance";
 import { UserContext } from "../../context/userContext";
-import Loader from "../../components/layout/Loader";
+import AuthLoader from "../../components/layout/AuthLoader";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -39,8 +39,6 @@ const LoginForm = () => {
         password,
       });
 
-      console.log(email, password);
-
       const { token, user } = response.data;
 
       if (token) {
@@ -52,7 +50,6 @@ const LoginForm = () => {
         navigate("/dashboard");
       }
     } catch (error: unknown) {
-      // Explicitly declare error as unknown
       setLoading(false);
 
       if (error instanceof Error) {
@@ -112,7 +109,7 @@ const LoginForm = () => {
           >
             {loading ? (
               <>
-                <Loader />
+                <AuthLoader />
               </>
             ) : (
               <>LOGIN</>
