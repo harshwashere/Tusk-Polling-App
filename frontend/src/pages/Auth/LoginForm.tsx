@@ -88,7 +88,6 @@ const LoginForm = () => {
             placeholder="john@example.com"
             type="email"
             name="email"
-            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
           />
 
           <AuthInput
@@ -98,7 +97,6 @@ const LoginForm = () => {
             placeholder="Minimum 8 characters are required."
             type="password"
             name="password"
-            pattern="/^[a-zA-Z0-9!@#\$%\^\&*_=+-]{8,12}$/"
           />
 
           {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
