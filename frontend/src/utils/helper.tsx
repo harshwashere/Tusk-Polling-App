@@ -3,7 +3,7 @@ export const validateEmail = (email: string): boolean => {
   return regex.test(email);
 };
 
-export const serverUri = "http://localhost:2000";
+export const serverUri = "https://tusk-polling-backend.vercel.app";
 // "https://tusk-polling-backend.vercel.app"
 
 export const API_PATHS = {
