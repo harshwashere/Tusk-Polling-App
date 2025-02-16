@@ -47,16 +47,14 @@ const CreatePoll = () => {
         const imgUploadRes = await uploadImage(imageOption.file);
         return imgUploadRes.imageUrl || "";
       } catch (error) {
-        console.error(`Error uploading image: ${imageOption.file.name}`, error);
         toast.error(`Failed to upload image: ${imageOption.file.name}`);
-        return "";
+        return error;
       }
     });
 
     const optionArr = await Promise.all(optionPromises);
 
     const validOptions = optionArr.filter((url) => url.trim() !== "");
-    console.log(validOptions);
 
     if (validOptions.length < imageOptions.length) {
       toast.error("Some images failed to upload. Please try again.");
@@ -113,7 +111,6 @@ const CreatePoll = () => {
     // const formattedOptions = optionData.map((optiontext) => ({
     //   optiontext,
     // }));
-    // console.log("Formatted Options:", formattedOptions);
 
     try {
       const response = await axiosInstance.post(API_PATHS.POLLS.CREATE, {

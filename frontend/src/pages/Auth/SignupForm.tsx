@@ -8,6 +8,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/helper";
 import uploadImage from "../../utils/uploadImage";
 import AuthLoader from "../../components/layout/AuthLoader";
+import toast from "react-hot-toast";
 
 const SignupForm = () => {
   const [input, setInput] = useState({
@@ -30,7 +31,7 @@ const SignupForm = () => {
     let profileimageUrl = "";
 
     if (!input.fullName || !input.email || !input.username || !input.password) {
-      alert("All fields are required!");
+      toast.error("All fields are required!");
       return;
     }
 
@@ -40,7 +41,6 @@ const SignupForm = () => {
       if (input.profilePic) {
         const imgUpload = await uploadImage(input.profilePic);
         profileimageUrl = imgUpload.imageUrl || "";
-        console.log("Uploaded Image URL: ", profileimageUrl);
       }
 
       const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
@@ -66,7 +66,6 @@ const SignupForm = () => {
         error.response?.data?.message ||
           "Something went wrong. Please try again."
       );
-      console.error("Signup Error: ", error.response?.data);
     }
   };
 
@@ -102,7 +101,6 @@ const SignupForm = () => {
             placeholder="Full Name"
             label="Full Name"
             type="text"
-            pattern="^([A-Za-z]+[,.]?[ ]?|[A-Za-z]+['-]?)+$"
           />
           <AuthInput
             name="email"
@@ -111,7 +109,6 @@ const SignupForm = () => {
             placeholder="Email"
             label="Email"
             type="email"
-            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
           />
           <AuthInput
             name="username"
@@ -120,7 +117,6 @@ const SignupForm = () => {
             placeholder="Username"
             label="Username"
             type="text"
-            pattern="[A-Za-z][A-Za-z0-9_]{2,15}$"
           />
           <AuthInput
             name="password"
@@ -129,7 +125,6 @@ const SignupForm = () => {
             placeholder="Password"
             label="Password"
             type="password"
-            pattern="/^[a-zA-Z0-9!@#\$%\^\&*_=+-]{8,12}$/"
           />
         </div>
 

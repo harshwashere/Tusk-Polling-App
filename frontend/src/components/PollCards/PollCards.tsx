@@ -133,6 +133,7 @@ const PollCards = ({
 
       toast.success(response.data.message);
     } catch (error) {
+      toast.error("Error bookmarking poll")
       console.error(error);
     }
   };

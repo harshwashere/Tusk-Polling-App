@@ -10,14 +10,7 @@ const generateToken = (id) => {
 export const register = async (req, res) => {
   const { fullname, username, email, password, profileimageUrl } = req.body;
 
-  if (!fullname || !username || !email || !password || !profileimageUrl) {
-    console.log("Missing Fields: ", {
-      fullname,
-      username,
-      email,
-      password,
-      profileimageUrl,
-    });
+  if (!fullname || !username || !email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -52,7 +45,6 @@ export const register = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    console.error("Error registering user: ", error);
     return res
       .status(500)
       .json({ message: "Error registering user", error: error.message });

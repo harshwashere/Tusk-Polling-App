@@ -50,7 +50,6 @@ const HeaderWithFilter = ({ title, filterType, setFilterType }: PropsType) => {
               }`}
               onClick={() => {
                 setFilterType(type.value);
-                console.log(type.value)
               }}
               
             >

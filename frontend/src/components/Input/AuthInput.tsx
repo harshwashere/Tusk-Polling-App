@@ -4,11 +4,10 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 type PropsType = {
   name: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // ✅ Fix: Accepts an event
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
   label: string;
   type: string;
-  pattern: string
 };
 
 const AuthInput = ({
@@ -18,7 +17,6 @@ const AuthInput = ({
   label,
   placeholder,
   type,
-  pattern
 }: PropsType) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,7 +30,6 @@ const AuthInput = ({
             type === "password" ? (showPassword ? "text" : "password") : type
           }
           placeholder={placeholder}
-          pattern={pattern}
           className="w-full bg-transparent outline-none"
           value={value}
           onChange={onChange}

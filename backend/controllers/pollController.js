@@ -141,7 +141,6 @@ export const getallpolls = async (req, res) => {
             stats: statsWithDefaults
         });
     } catch (error) {
-        console.error(error);
         return res.status(500).json({ message: "Error fetching polls", error: error.message });
     }
 };
@@ -192,7 +191,6 @@ export const getVotedPolls = async (req, res) => {
             totalPolls,
         });
     } catch (error) {
-        console.error("Error fetching voted polls:", error);
         return res.status(500).json({
             message: "Error fetching voted polls",
             error: error.message || error,
@@ -261,7 +259,6 @@ export const voteonpoll = async (req, res) => {
 
         return res.status(200).json({ poll });
     } catch (error) {
-        console.error("Error in voteonpoll:", error);
         return res.status(500).json({ message: "Error processing vote", error });
     }
 };
