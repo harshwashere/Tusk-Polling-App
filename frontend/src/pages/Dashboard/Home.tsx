@@ -29,6 +29,7 @@ const Home = () => {
   const [filterType, setFilterType] = useState<string>("");
   const PAGE_SIZE = 10;
 
+
   const loadMorePolls = () => {
     setPage((prevPage) => prevPage + 1);
   };
@@ -41,7 +42,7 @@ const Home = () => {
       const response = await axiosInstance.get(
         `${API_PATHS.POLLS.GET_ALL}?page=${overridePage}&limit=${PAGE_SIZE}&type=${filterType}`
       );
-
+      console.log(response);
       if (response.data.polls.length > 0) {
         setAllPolls((prevPolls) =>
           overridePage === 1
@@ -117,6 +118,7 @@ const Home = () => {
               createdAt={poll.createdAt}
               isBookmarked={false}
               toggleBookmark={() => {}}
+              _id={undefined}
             />
           ))}
         </InfiniteScroll>

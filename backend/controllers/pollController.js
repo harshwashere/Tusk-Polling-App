@@ -233,8 +233,8 @@ export const voteonpoll = async (req, res) => {
             return res.status(400).json({ message: "Poll is closed" });
         }
 
-        if (poll.voters.includes(voterId)) {
-            if (!responseText) {
+        if (!poll.voters.includes(voterId)) {
+            if (responseText) {
                 return res.status(400).json({ message: "User has already voted on this poll." });
             }
             poll.response.push({ voterId, responseText });
@@ -249,10 +249,6 @@ export const voteonpoll = async (req, res) => {
                 return res.status(400).json({ message: "Invalid option index." });
             }
             poll.options[optionindex].votes += 1;
-        }
-
-        if (!poll.voters.includes(voterId)) {
-            poll.voters.push(voterId);
         }
 
         await poll.save();

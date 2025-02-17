@@ -1,10 +1,14 @@
 import Rating from "./Rating";
-import OptionInputTitle from "./OptionInputTitle";
+import OptionInputTitle, { OptionRatingInputTitle } from "./OptionInputTitle";
 import ImageOptionInputTile from "./ImageOptionInputTile";
 
 export interface Option {
   _id: string;
-  optiontext: string;
+  optiontext:
+    | {
+        optiontext: string;
+      }
+    | string;
 }
 
 interface PollContentProps {
@@ -28,6 +32,12 @@ const PollContent = ({
   userResponse,
   onResponseChange,
 }: PollContentProps) => {
+  const getOptionText = (option: Option) => {
+    return typeof option.optiontext === "string"
+      ? option.optiontext
+      : option.optiontext.optiontext;
+  };
+
   switch (type) {
     case "single-choice":
       return (
@@ -36,20 +46,21 @@ const PollContent = ({
             <OptionInputTitle
               key={item._id}
               isSelected={selectedOptionIndex === index}
-              label={item.optiontext}
+              label={getOptionText(item)}
               onSelect={async () => onOptionSelect(index)}
             />
           ))}
         </>
       );
+
     case "yes/no":
       return (
         <>
           {option.map((opt, index) => (
-            <OptionInputTitle
+            <OptionRatingInputTitle
               key={opt._id}
               isSelected={selectedOptionIndex === index}
-              label={opt.optiontext}
+              label={getOptionText(opt)}
               onSelect={async () => onOptionSelect(index)}
             />
           ))}
@@ -63,7 +74,7 @@ const PollContent = ({
             <ImageOptionInputTile
               key={option._id}
               isSelected={selectedOptionIndex === index}
-              imgUrl={option.optiontext || ""}
+              imgUrl={getOptionText(option) || ""}
               onSelect={() => onOptionSelect(index)}
             />
           ))}

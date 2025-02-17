@@ -114,11 +114,13 @@ const PollCards = ({
         getPostData()
       );
 
-      console.log(response);
-      getPollDetail();
-      setIsVoteComplete(true);
-      onUserVoted();
-      toast.success("Vote submitted successfully!");
+      if (response.status === 200) {
+        setIsVoteComplete(true);
+        console.log(response);
+        getPollDetail();
+        onUserVoted();
+        toast.success("Vote submitted successfully!");
+      }
     } catch (error) {
       console.error(error || "Error submitting votes");
     }
@@ -133,18 +135,21 @@ const PollCards = ({
 
       toast.success(response.data.message);
     } catch (error) {
-      toast.error("Error bookmarking poll")
+      toast.error("Error bookmarking poll");
       console.error(error);
     }
   };
 
   const closePoll = async () => {
     try {
-      const response = await axiosInstance.post(API_PATHS.POLLS.CLOSE(id));
+      let ans = confirm("Do you wanna delete this post?");
+      if (ans) {
+        const response = await axiosInstance.post(API_PATHS.POLLS.CLOSE(id));
 
-      if (response.data) {
-        setPollClosed(true);
-        toast.success(response.data?.message || "Poll Deleted Successfully");
+        if (response.data) {
+          setPollClosed(true);
+          toast.success(response.data?.message || "Poll Deleted Successfully");
+        }
       }
     } catch (error) {
       toast.error("Something went wrong. Please try again later!!");
@@ -154,12 +159,15 @@ const PollCards = ({
 
   const deletePoll = async () => {
     try {
-      const response = await axiosInstance.delete(API_PATHS.POLLS.DELETE(id));
+      let ans = confirm("Do you wanna delete this post?");
+      if (ans) {
+        const response = await axiosInstance.delete(API_PATHS.POLLS.DELETE(id));
 
-      if (response.data) {
-        setPollDeleted(true);
-        onPollCreateOrDelete();
-        toast.success(response.data?.message || "Poll Deleted Successfully");
+        if (response.data) {
+          setPollDeleted(true);
+          onPollCreateOrDelete();
+          toast.success(response.data?.message || "Poll Deleted Successfully");
+        }
       }
     } catch (error) {
       toast.error("Something went wrong. Please try again later!!");
